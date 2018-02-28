@@ -8,7 +8,11 @@ public class TestFile {
     private String filename;
     private String actualClass;
     private double spamProbability;
+    /*
+    Adding a comment above test file contructor for test of commit
 
+
+     */
     public TestFile(String filename, String actualClass, double spamProbability) {
         this.filename = filename;
         this.actualClass = actualClass;
