@@ -1,8 +1,10 @@
-//  TestFile class holds the data for the tableview
-
 package sample;
 
+//  TestFile class holds the data for the tableview
+
 import java.text.DecimalFormat;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class TestFile {
     private String filename;
@@ -36,12 +38,11 @@ public class TestFile {
         this.filename = value;
     }
 
-    public void setSpamProbability(double val) {
-        this.spamProbability = val;
+    public void setSpamProbability(double value) {
+        this.spamProbability = value;
     }
 
     public void setActualClass(String value) {
         this.actualClass = value;
     }
 }
-
