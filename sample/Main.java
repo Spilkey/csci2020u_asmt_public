@@ -25,7 +25,6 @@ public class Main extends Application {
     // Define variables
     private TableView<TestFile> email;
     private BorderPane layout = new BorderPane();
-    private TextField accuracyField, precisionField;
     private ObservableList<TestFile> files = FXCollections.observableArrayList();
     private double truePositive = 0.0;
     private double trueNegative = 0.0;
