@@ -1,20 +1,20 @@
 // WordCounter.java class from in lecture
 
-package sample;
-
 import java.io.*;
 import java.util.*;
 
 public class WordCounter {
     private Map<String, Integer> wordCounts;
-
+    private int numOfFiles;
     public WordCounter() {
-        wordCounts = new TreeMap<>();
+        wordCounts = new HashMap<>();
     }
 
     public void processFile(File file) throws IOException {
+        LinkedList<String> words = new LinkedList<>();
         System.out.println("Processing " + file.getAbsolutePath() + "...");
         if (file.isDirectory()) {
+
             // process all the files in that directory
             File[] contents = file.listFiles();
             for (File current : contents) {
@@ -27,9 +27,14 @@ public class WordCounter {
             while (scanner.hasNext()) {
                 String word = scanner.next();
                 if (isWord(word)) {
-                    countWord(word);
+                    if(!words.contains(word)){
+                        countWord(word);
+                        words.add(word);
+                    }
+
                 }
             }
+            words.clear();
         }
     }
 
@@ -47,32 +52,37 @@ public class WordCounter {
         }
     }
 
-    public void outputWordCounts(int minCount, File outFile) throws IOException {
-        System.out.println("Saving word counts to " + outFile.getAbsolutePath());
-        System.out.println("# of words: " + wordCounts.keySet().size());
-
-        outFile.createNewFile();
-        if (outFile.canWrite()) {
-            PrintWriter fileOut = new PrintWriter(outFile);
-
-            Set<String> keys = wordCounts.keySet();
-            Iterator<String> keyIterator = keys.iterator();
-
-            while (keyIterator.hasNext()) {
-                String key = keyIterator.next();
-                int count = wordCounts.get(key);
-
-                if (count >= minCount) {
-                    fileOut.println(key + ": " + count);
-                }
-            }
-
-            fileOut.close();
-        } else {
-            System.err.println("Error:  Cannot write to file: " + outFile.getAbsolutePath());
-        }
-
+    public void showWordCounts(){
+        System.out.println(wordCounts);
     }
+
+    public Map<String, Integer> getWordCounts() {
+        return wordCounts;
+    }
+
+
+    //        outFile.createNewFile();
+//        if (outFile.canWrite()) {
+//            PrintWriter fileOut = new PrintWriter(outFile);
+//
+//            Set<String> keys = wordCounts.keySet();
+//            Iterator<String> keyIterator = keys.iterator();
+//
+//            while (keyIterator.hasNext()) {
+//                String key = keyIterator.next();
+//                int count = wordCounts.get(key);
+//
+//                if (count >= minCount) {
+//                    fileOut.println(key + ": " + count);
+//                }
+//            }
+//
+//            fileOut.close();
+//        } else {
+//            System.err.println("Error:  Cannot write to file: " + outFile.getAbsolutePath());
+//        }
+
+
 
   /*public static void main(String[] args) {
     if (args.length < 2) {

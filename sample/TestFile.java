@@ -1,8 +1,8 @@
 //  TestFile class holds the data for the tableview
 
-package sample;
-
 import java.text.DecimalFormat;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class TestFile {
     private String filename;
@@ -27,6 +27,8 @@ public class TestFile {
         DecimalFormat df = new DecimalFormat("0.00000");
         return df.format(this.spamProbability);
     }
+
+
 
     public String getActualClass() {
         return this.actualClass;
