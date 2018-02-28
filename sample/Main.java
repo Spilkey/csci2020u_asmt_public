@@ -102,7 +102,6 @@ public class Main extends Application {
         for (Map.Entry<String, Integer> entry: wordCounterHam2.getWordCounts().entrySet()) {
             if (HamsMap.containsKey(entry.getKey())) {
                 HamsMap.replace(entry.getKey(), HamsMap.get(entry.getKey()), HamsMap.get(entry.getKey()) + entry.getValue());
-                System.out.println(entry.getKey()+ " new value is "+  HamsMap.get(entry.getKey()) + entry.getValue()+ "Individual values are "+ HamsMap.get(entry.getKey())+ " and "+entry.getValue());
             } else {
                 HamsMap.put(entry.getKey(),entry.getValue());
             }
@@ -117,7 +116,6 @@ public class Main extends Application {
         //Calculating Pr ( Wi|H)=
         for (Map.Entry<String, Integer> entry : HamsMap.entrySet()) {
             HamsProb.put(entry.getKey(), (double)entry.getValue()/numOfHamFiles);
-
             if (!allWords.contains(entry.getKey())) {
                 allWords.add(entry.getKey());
             }
@@ -126,7 +124,6 @@ public class Main extends Application {
         //Calculating Pr ( Wi|S)=
         for (Map.Entry<String, Integer> entry : SpamsMap.entrySet()) {
             SpamsProb.put(entry.getKey(), (double)entry.getValue()/numOfSpamFiles);
-
             if (!allWords.contains(entry.getKey())) {
                 allWords.add(entry.getKey());
             }
@@ -143,8 +140,7 @@ public class Main extends Application {
                 currentHamProb = HamsProb.get(currentWord);
             }
             isWordSpamProb.put(currentWord, (currentSpamProb)/(currentHamProb+currentSpamProb));
-            System.out.println("Current word is this "+currentWord);
-            System.out.println("Probablility of that word being in spam file"+(currentSpamProb)/(currentHamProb+currentSpamProb));
+
         }
 
         directoryChooser.setTitle("Open Folder Ham Folder for Testing");
