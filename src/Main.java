@@ -73,6 +73,12 @@ public class Main extends Application {
         File ham2Dir = new File(directoryChooseHam2.toString());
         File spamDir = new File(directoryChooseSpam.toString());
 
+
+
+        /*
+        adding some spaces for a test commit
+
+         */
         try {
             wordCounterHam1.processFile(ham1Dir);
             wordCounterHam2.processFile(ham2Dir);
@@ -98,7 +104,6 @@ public class Main extends Application {
         for (Map.Entry<String, Integer> entry: wordCounterHam2.getWordCounts().entrySet()){
             if(HamsMap.containsKey(entry.getKey())){
                 HamsMap.replace(entry.getKey(), HamsMap.get(entry.getKey()), HamsMap.get(entry.getKey()) + entry.getValue());
-                System.out.println(entry.getKey()+ " new value is "+  HamsMap.get(entry.getKey()) + entry.getValue()+ "Individual values are "+ HamsMap.get(entry.getKey())+ " and "+entry.getValue());
             }else{
                 HamsMap.put(entry.getKey(),entry.getValue());
             }
@@ -115,9 +120,7 @@ public class Main extends Application {
         //Calculating Pr ( Wi|H)=
         for(Map.Entry<String, Integer> entry : HamsMap.entrySet()){
             HamsProb.put(entry.getKey(), (double)entry.getValue()/numOfHamFiles);
-
             if(!allWords.contains(entry.getKey())){
-//                System.out.println("Adding "+entry.getKey());
                 allWords.add(entry.getKey());
             }
         }
@@ -125,22 +128,19 @@ public class Main extends Application {
         //Calculating Pr ( Wi|S)=
         for(Map.Entry<String, Integer> entry : SpamsMap.entrySet()){
             SpamsProb.put(entry.getKey(), (double)entry.getValue()/numOfSpamFiles);
-//            System.out.println("Words is"+entry.getKey());
-//            System.out.println((double)entry.getValue()/numOfSpamFiles);
-
             if(!allWords.contains(entry.getKey())){
                 allWords.add(entry.getKey());
-                //System.out.println("Adding "+entry.getKey());
+
             }
         }
 
 
 
-        System.out.println(SpamsProb);
+
         for(String currentWord : allWords){
             double currentHamProb = 0.0;
             double currentSpamProb = 0.0;
-            //System.out.println("1Current word is this "+currentWord);
+
             if(SpamsProb.containsKey(currentWord)){
                 currentSpamProb = SpamsProb.get(currentWord);
             }
@@ -148,17 +148,10 @@ public class Main extends Application {
                 currentHamProb = HamsProb.get(currentWord);
             }
 
-//            System.out.println("2Current word is this "+currentWord);
-//            System.out.println("Ham Prob is"+currentHamProb);
-//            System.out.println("Spam Prob is"+currentSpamProb);
-            //System.out.println((currentSpamProb)/(currentHamProb+currentSpamProb));
             isWordSpamProb.put(currentWord, (currentSpamProb)/(currentHamProb+currentSpamProb));
-            System.out.println("Current word is this "+currentWord);
-            System.out.println("Probablility of that word being in spam file"+(currentSpamProb)/(currentHamProb+currentSpamProb));
+
         }
-//        System.out.println(HamsProb);
-//        System.out.println(SpamsProb);
-//        System.out.println(isWordSpamProb);
+
 
 
 
