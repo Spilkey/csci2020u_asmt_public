@@ -102,7 +102,7 @@ public class Main extends Application {
         for (Map.Entry<String, Integer> entry: wordCounterHam2.getWordCounts().entrySet()) {
             if (HamsMap.containsKey(entry.getKey())) {
                 HamsMap.replace(entry.getKey(), HamsMap.get(entry.getKey()), HamsMap.get(entry.getKey()) + entry.getValue());
-
+                System.out.println(entry.getKey()+ " new value is "+  HamsMap.get(entry.getKey()) + entry.getValue()+ "Individual values are "+ HamsMap.get(entry.getKey())+ " and "+entry.getValue());
             } else {
                 HamsMap.put(entry.getKey(),entry.getValue());
             }
@@ -126,6 +126,7 @@ public class Main extends Application {
         //Calculating Pr ( Wi|S)=
         for (Map.Entry<String, Integer> entry : SpamsMap.entrySet()) {
             SpamsProb.put(entry.getKey(), (double)entry.getValue()/numOfSpamFiles);
+
             if (!allWords.contains(entry.getKey())) {
                 allWords.add(entry.getKey());
             }
@@ -142,7 +143,8 @@ public class Main extends Application {
                 currentHamProb = HamsProb.get(currentWord);
             }
             isWordSpamProb.put(currentWord, (currentSpamProb)/(currentHamProb+currentSpamProb));
-
+            System.out.println("Current word is this "+currentWord);
+            System.out.println("Probablility of that word being in spam file"+(currentSpamProb)/(currentHamProb+currentSpamProb));
         }
 
         directoryChooser.setTitle("Open Folder Ham Folder for Testing");
@@ -204,7 +206,6 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-<<<<<<< HEAD
 
     // #TODO Maybe put the next 4 functions in another class
     public ObservableList<TestFile> printFiles() {
@@ -254,57 +255,6 @@ public class Main extends Application {
         }
     }
 
-=======
-
-    // #TODO Maybe put the next 4 functions in another class
-    public ObservableList<TestFile> printFiles() {
-        return files;
-    }
-
-    public void addFiles(TestFile file) {
-        this.files.add(file);
-    }
-
-    public void processTestFile(File file, String actualclass, Map<String, Double> isWordSpam) throws IOException {
-        System.out.println("Processing " + file.getAbsolutePath() + "...");
-
-        if (file.isDirectory()) {
-            // process all the files in that directory
-            File[] contents = file.listFiles();
-            for (File current : contents) {
-                processTestFile(current,actualclass, isWordSpam);
-            }
-        } else if (file.exists()) {
-            // count the words in this file
-            double sum = 0.0;
-            Scanner scanner = new Scanner(file);
-            scanner.useDelimiter("\\s"); // "[\s\.;:\?\!,]");//" \t\n.;,!?-/\\");
-            while (scanner.hasNext()) {
-                String word = scanner.next();
-                if (isWord(word)) {
-                    if(isWordSpam.containsKey(word)) {
-                        // temps used to calculate sums and stop infinite values from division
-                        double temp1 = Math.log(1.0 - isWordSpam.get(word));
-                        double temp2 = Math.log(isWordSpam.get(word));
-                        if(Double.isInfinite(temp1)){ temp1 = 0.0;}
-                        if(Double.isInfinite(temp2)){ temp2 = 0.0;}
-
-                        sum += temp1 - temp2;
-                    }
-                }
-
-            }
-            double SFprob = 1.0/(1.0 + Math.exp(sum)); // 1/1+(e^sum)
-            if ((actualclass.equals("Ham") && SFprob <= 0.5)) {
-                trueNegative ++;
-            } else if(actualclass.equals("Spam") && SFprob > 0.5) {
-                truePositive ++;
-            }
-            this.addFiles(new TestFile(file.getName(), actualclass, SFprob));
-        }
-    }
-
->>>>>>> refs/remotes/csci2020u_asmts/master
     private boolean isWord(String word) {
         String pattern = "^[a-zA-Z]+$";
         return word.matches(pattern);
