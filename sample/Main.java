@@ -107,41 +107,20 @@ public class Main extends Application {
             }
         }
 
-        System.out.println(HamsMap);
+
 
         // Find number of files in each training folder
         int numOfHamFiles = ham1Dir.listFiles().length + ham2Dir.listFiles().length;
         int numOfSpamFiles = spamDir.listFiles().length;
 
-        //Calculating Pr ( Wi|H)=
-        for (Map.Entry<String, Integer> entry : HamsMap.entrySet()) {
-            HamsProb.put(entry.getKey(), (double)entry.getValue()/numOfHamFiles);
-            if (!allWords.contains(entry.getKey())) {
-                allWords.add(entry.getKey());
-            }
-        }
+        //Calculating Pr (Wi|H)=
+        HamsProb = calculateProb(allWords,HamsMap, numOfHamFiles);
 
-        //Calculating Pr ( Wi|S)=
-        for (Map.Entry<String, Integer> entry : SpamsMap.entrySet()) {
-            SpamsProb.put(entry.getKey(), (double)entry.getValue()/numOfSpamFiles);
-            if (!allWords.contains(entry.getKey())) {
-                allWords.add(entry.getKey());
-            }
-        }
+        //Calculating Pr (Wi|S)=
+        SpamsProb = calculateProb(allWords, SpamsMap, numOfSpamFiles);
 
-        System.out.println(SpamsProb);
-        for (String currentWord : allWords) {
-            double currentHamProb = 0.0;
-            double currentSpamProb = 0.0;
-            if (SpamsProb.containsKey(currentWord)) {
-                currentSpamProb = SpamsProb.get(currentWord);
-            }
-            if (HamsProb.containsKey(currentWord)) {
-                currentHamProb = HamsProb.get(currentWord);
-            }
-            isWordSpamProb.put(currentWord, (currentSpamProb)/(currentHamProb+currentSpamProb));
-
-        }
+        //Calculating Pr (S|Wi)=
+        isWordSpamProb = calculateWordProb(allWords, HamsProb, SpamsProb);
 
         directoryChooser.setTitle("Open Folder Ham Folder for Testing");
         File directoryChooseTestHam = directoryChooser.showDialog(primaryStage);
@@ -255,4 +234,30 @@ public class Main extends Application {
         String pattern = "^[a-zA-Z]+$";
         return word.matches(pattern);
     }
+    private Map<String, Double> calculateWordProb(List<String> words, Map<String, Double> Hams, Map<String, Double> Spams){
+        Map<String, Double> results = new HashMap<>();
+        for (String currentWord : words) {
+            double currentHamProb = 0.0;
+            double currentSpamProb = 0.0;
+            if (Spams.containsKey(currentWord)) {
+                currentSpamProb = Spams.get(currentWord);
+            }
+            if (Hams.containsKey(currentWord)) {
+                currentHamProb = Hams.get(currentWord);
+            }
+            results.put(currentWord, (currentSpamProb)/(currentHamProb+currentSpamProb));
+        }
+        return results;
+    }
+    private Map<String, Double> calculateProb(List<String> words, Map<String, Integer> map, int n){
+        Map<String, Double> results = new HashMap<>();
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            results.put(entry.getKey(), (double)entry.getValue()/n);
+            if (!words.contains(entry.getKey())) {
+                words.add(entry.getKey());
+            }
+        }
+        return results;
+    }
 }
+

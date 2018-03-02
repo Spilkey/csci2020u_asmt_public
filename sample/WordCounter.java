@@ -7,7 +7,7 @@ import java.util.*;
 
 public class WordCounter {
     private Map<String, Integer> wordCounts;
-    private int numOfFiles;
+
     public WordCounter() {
         wordCounts = new HashMap<>();
     }
