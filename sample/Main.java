@@ -55,7 +55,7 @@ public class Main extends Application {
         editArea.setVgap(10);
         editArea.setHgap(10);
 
-        // Choose directory
+        // Choose directories
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setInitialDirectory(new File("."));
 
@@ -96,7 +96,7 @@ public class Main extends Application {
         // Linked list containing all the words whether ham or spam
         LinkedList<String> allWords = new LinkedList<>();
 
-        // Merge wordCounterHam1 and wordCounterHam2 into one map (since they are 2 seperate file folders)
+        // Merge wordCounterHam1 and wordCounterHam2 into one map (since they are 2 separate file folders)
         HamsMap.putAll(wordCounterHam1.getWordCounts());
         for (Map.Entry<String, Integer> entry: wordCounterHam2.getWordCounts().entrySet()) {
             if (HamsMap.containsKey(entry.getKey())) {
@@ -106,13 +106,11 @@ public class Main extends Application {
             }
         }
 
-        System.out.println(HamsMap);
-
         // Find number of files in each training folder
         int numOfHamFiles = ham1Dir.listFiles().length + ham2Dir.listFiles().length;
         int numOfSpamFiles = spamDir.listFiles().length;
 
-        //Calculating Pr(Wi|H)=
+        // Calculating Pr(Wi|H)=
         for (Map.Entry<String, Integer> entry : HamsMap.entrySet()) {
             HamsProb.put(entry.getKey(), (double)entry.getValue()/numOfHamFiles);
             if (!allWords.contains(entry.getKey())) {
@@ -120,7 +118,7 @@ public class Main extends Application {
             }
         }
 
-        //Calculating Pr(Wi|S)=
+        // Calculating Pr(Wi|S)=
         for (Map.Entry<String, Integer> entry : SpamsMap.entrySet()) {
             SpamsProb.put(entry.getKey(), (double)entry.getValue()/numOfSpamFiles);
             if (!allWords.contains(entry.getKey())) {
@@ -142,6 +140,7 @@ public class Main extends Application {
 
         }
 
+        // Choose directories for testing
         directoryChooser.setTitle("Open Folder Ham Folder for Testing");
         File directoryChooseTestHam = directoryChooser.showDialog(primaryStage);
         directoryChooser.setTitle("Open Folder Spam Folder for Testing");
@@ -202,11 +201,10 @@ public class Main extends Application {
         launch(args);
     }
 
-    // #TODO Maybe put the next 4 functions in another class
+    // Functions for returning TestFile into an ObservableList
     public ObservableList<TestFile> printFiles() {
         return files;
     }
-
     public void addFiles(TestFile file) {
         this.files.add(file);
     }
