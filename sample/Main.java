@@ -25,7 +25,6 @@ public class Main extends Application {
     // Define variables
     private TableView<TestFile> email;
     private BorderPane layout = new BorderPane();
-    private TextField accuracyField, precisionField;
     private ObservableList<TestFile> files = FXCollections.observableArrayList();
     private double truePositive = 0.0;
     private double trueNegative = 0.0;
@@ -139,11 +138,11 @@ public class Main extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        File hamtestDir = new File(directoryChooseTestHam.toString());
-        File spamtestDir = new File(directoryChooseTestSpam.toString());
+        File hamTestDir = new File(directoryChooseTestHam.toString());
+        File spamTestDir = new File(directoryChooseTestSpam.toString());
 
-        int hamTestCount = hamtestDir.list().length;
-        int spamTestCount = spamtestDir.list().length;
+        int hamTestCount = hamTestDir.list().length;
+        int spamTestCount = spamTestDir.list().length;
 
         double Accuracy = (trueNegative + truePositive)/(hamTestCount +spamTestCount);
         double Precision = truePositive/((spamTestCount-truePositive) + truePositive);
@@ -152,18 +151,18 @@ public class Main extends Application {
         // Printing accuracy and precision in labels
         Label accuracy = new Label("Accuracy: ");
         editArea.add(accuracy, 0, 1);
-        Label accuracynum = new Label(Double.toString(Accuracy));
-        editArea.add(accuracynum, 1, 1);
+        Label accuracyNum = new Label(Double.toString(Accuracy));
+        editArea.add(accuracyNum, 1, 1);
 
         Label precision = new Label("Precision: ");
         editArea.add(precision, 0, 2);
-        Label precisionnum = new Label(Double.toString(Precision));
-        editArea.add(precisionnum, 1, 2);
+        Label precisionNum = new Label(Double.toString(Precision));
+        editArea.add(precisionNum, 1, 2);
 
-        Label hamprecision = new Label("Ham Precision: ");
-        editArea.add(hamprecision, 0, 3);
-        Label hamprecisionnum = new Label(Double.toString(HamPrecision));
-        editArea.add(hamprecisionnum, 1, 3);
+        Label hamPrecision = new Label("Ham Precision: ");
+        editArea.add(hamPrecision, 0, 3);
+        Label hamPrecisionNum = new Label(Double.toString(HamPrecision));
+        editArea.add(hamPrecisionNum, 1, 3);
 
         layout.setCenter(email);
         layout.setBottom(editArea);
@@ -220,6 +219,7 @@ public class Main extends Application {
                 }
 
             }
+            // Calculating Pr(S|F)=
             double SFprob = 1.0/(1.0 + Math.exp(sum)); // 1/1+(e^sum)
             if ((actualclass.equals("Ham") && SFprob <= 0.5)) {
                 trueNegative ++;
