@@ -89,7 +89,8 @@ public class Main extends Application {
         }
         // Define maps that hold ham/spam word counts and probability for each word
         Map<String, Integer> HamsMap = new HashMap<>();
-        Map<String, Integer> SpamsMap = wordCounterSpam.getWordCounts();;
+        Map<String, Integer> SpamsMap = wordCounterSpam.getWordCounts();
+        ;
         Map<String, Double> HamsProb = new HashMap<>();
         Map<String, Double> SpamsProb = new HashMap<>();
         Map<String, Double> isWordSpamProb = new HashMap<>();
@@ -98,29 +99,34 @@ public class Main extends Application {
 
         // Merge wordCounterHam1 and wordCounterHam2 into one map (since they are 2 separate file folders)
         HamsMap.putAll(wordCounterHam1.getWordCounts());
-        for (Map.Entry<String, Integer> entry: wordCounterHam2.getWordCounts().entrySet()) {
+        for (Map.Entry<String, Integer> entry : wordCounterHam2.getWordCounts().entrySet()) {
             if (HamsMap.containsKey(entry.getKey())) {
                 HamsMap.replace(entry.getKey(), HamsMap.get(entry.getKey()), HamsMap.get(entry.getKey()) + entry.getValue());
             } else {
-                HamsMap.put(entry.getKey(),entry.getValue());
+                HamsMap.put(entry.getKey(), entry.getValue());
             }
         }
-
 
 
         // Find number of files in each training folder
         int numOfHamFiles = ham1Dir.listFiles().length + ham2Dir.listFiles().length;
         int numOfSpamFiles = spamDir.listFiles().length;
 
-        //Calculating Pr (Wi|H)=
-        HamsProb = calculateProb(allWords,HamsMap, numOfHamFiles);
 
-        //Calculating Pr (Wi|S)=
+        // Calculating Pr (Wi|H)=
+        HamsProb = calculateProb(allWords, HamsMap, numOfHamFiles);
+
+        // Calculating Pr (Wi|S)=
         SpamsProb = calculateProb(allWords, SpamsMap, numOfSpamFiles);
 
-        //Calculating Pr (S|Wi)=
+        //commonWordFilter(HamsProb, HamsMap, allWords);
+        //commonWordFilter(SpamsProb, SpamsMap, allWords);
+
+
+        // Calculating Pr (S|Wi)=
         isWordSpamProb = calculateWordProb(allWords, HamsProb, SpamsProb);
 
+        //middleWordFilter(isWordSpamProb);
         // Choose directories for testing
         directoryChooser.setTitle("Open Folder Ham Folder for Testing");
         File directoryChooseTestHam = directoryChooser.showDialog(primaryStage);
@@ -131,7 +137,7 @@ public class Main extends Application {
             processTestFile(directoryChooseTestHam, "Ham", isWordSpamProb);
             processTestFile(directoryChooseTestSpam, "Spam", isWordSpamProb);
             System.out.println(isWordSpamProb);
-        } catch(FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             System.err.println("Invalid input hamDir: " + ham1Dir.getAbsolutePath());
             System.err.println("Invalid input spamDir: " + spamDir.getAbsolutePath());
             e.printStackTrace();
@@ -145,9 +151,9 @@ public class Main extends Application {
         int hamTestCount = hamTestDir.list().length;
         int spamTestCount = spamTestDir.list().length;
 
-        double Accuracy = (trueNegative + truePositive)/(hamTestCount +spamTestCount);
-        double Precision = truePositive/((spamTestCount-truePositive) + truePositive);
-        double HamPrecision = trueNegative/((hamTestCount-trueNegative)+trueNegative);
+        double Accuracy = (trueNegative + truePositive) / (hamTestCount + spamTestCount);
+        double Precision = truePositive / ((spamTestCount - truePositive) + truePositive);
+        double HamPrecision = trueNegative / ((hamTestCount - trueNegative) + trueNegative);
 
         // Printing accuracy and precision in labels
         Label accuracy = new Label("Accuracy: ");
@@ -186,6 +192,7 @@ public class Main extends Application {
     public ObservableList<TestFile> printFiles() {
         return files;
     }
+
     public void addFiles(TestFile file) {
         this.files.add(file);
     }
@@ -197,7 +204,7 @@ public class Main extends Application {
             // process all the files in that directory
             File[] contents = file.listFiles();
             for (File current : contents) {
-                processTestFile(current,actualclass, isWordSpam);
+                processTestFile(current, actualclass, isWordSpam);
             }
         } else if (file.exists()) {
             // count the words in this file
@@ -207,24 +214,28 @@ public class Main extends Application {
             while (scanner.hasNext()) {
                 String word = scanner.next();
                 if (isWord(word)) {
-                    if(isWordSpam.containsKey(word)) {
+                    if (isWordSpam.containsKey(word)) {
                         // temps used to calculate sums and stop infinite values from division
                         double temp1 = Math.log(1.0 - isWordSpam.get(word));
                         double temp2 = Math.log(isWordSpam.get(word));
-                        if(Double.isInfinite(temp1)){ temp1 = 0.0;}
-                        if(Double.isInfinite(temp2)){ temp2 = 0.0;}
+                        if (Double.isInfinite(temp1)) {
+                            temp1 = 0.0;
+                        }
+                        if (Double.isInfinite(temp2)) {
+                            temp2 = 0.0;
+                        }
 
                         sum += temp1 - temp2;
                     }
                 }
-
             }
             // Calculating Pr(S|F)=
-            double SFprob = 1.0/(1.0 + Math.exp(sum)); // 1/1+(e^sum)
-            if ((actualclass.equals("Ham") && SFprob <= 0.5)) {
-                trueNegative ++;
-            } else if(actualclass.equals("Spam") && SFprob > 0.5) {
-                truePositive ++;
+            double SFprob = 1.0 / (1.0 + Math.exp(sum)); // 1/1+(e^sum)
+            double Threshold = 0.01;
+            if ((actualclass.equals("Ham") && SFprob <= Threshold)) {
+                trueNegative++;
+            } else if (actualclass.equals("Spam") && SFprob > Threshold) {
+                truePositive++;
             }
             this.addFiles(new TestFile(file.getName(), actualclass, SFprob));
         }
@@ -234,7 +245,8 @@ public class Main extends Application {
         String pattern = "^[a-zA-Z]+$";
         return word.matches(pattern);
     }
-    private Map<String, Double> calculateWordProb(List<String> words, Map<String, Double> Hams, Map<String, Double> Spams){
+
+    private Map<String, Double> calculateWordProb(List<String> words, Map<String, Double> Hams, Map<String, Double> Spams) {
         Map<String, Double> results = new HashMap<>();
         for (String currentWord : words) {
             double currentHamProb = 0.0;
@@ -245,18 +257,64 @@ public class Main extends Application {
             if (Hams.containsKey(currentWord)) {
                 currentHamProb = Hams.get(currentWord);
             }
-            results.put(currentWord, (currentSpamProb)/(currentHamProb+currentSpamProb));
+            results.put(currentWord, (currentSpamProb) / (currentHamProb + currentSpamProb));
         }
         return results;
     }
-    private Map<String, Double> calculateProb(List<String> words, Map<String, Integer> map, int n){
+
+    private Map<String, Double> calculateProb(List<String> words, Map<String, Integer> map, int n) {
         Map<String, Double> results = new HashMap<>();
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
-            results.put(entry.getKey(), (double)entry.getValue()/n);
+            results.put(entry.getKey(), (double) entry.getValue() / n);
             if (!words.contains(entry.getKey())) {
                 words.add(entry.getKey());
             }
         }
         return results;
+    }
+
+    private void commonWordFilter(Map<String, Double> probs, Map<String, Integer> occur, List<String> allWords) {
+        List<String> removeWords = new LinkedList<>();
+//        for (Map.Entry<String, Double> entry : probs.entrySet()) {
+//            if (entry.getValue() >= 0.45 && entry.getValue() <= 0.55) {
+//                removeWords.add(entry.getKey());
+//            } else if (entry.getKey().equals("A") ||
+//                    entry.getKey().equals("THE") ||
+//                    entry.getKey().equals("IS") ||
+//                    entry.getKey().equals("ARE") ||
+//                    entry.getKey().equals("is") ||
+//                    entry.getKey().equals("a") ||
+//                    entry.getKey().equals("the") ||
+//                    entry.getKey().equals("are")) {
+//                removeWords.add(entry.getKey());
+//            }
+
+        // this will in theory remove rare words
+        for (Map.Entry<String, Integer> entry : occur.entrySet()) {
+            if (entry.getValue() <= 1) {
+                if (!removeWords.contains(entry.getKey())) {
+                    removeWords.add(entry.getKey());
+                }
+            }
+        }
+        for (String word : removeWords) {
+            probs.remove(word);
+            occur.remove(word);
+            if (allWords.contains(word)) {
+                allWords.remove(word);
+            }
+        }
+    }
+
+    private void middleWordFilter(Map<String, Double> probs) {
+        List<String> removeWords = new LinkedList<>();
+        for (Map.Entry<String, Double> entry : probs.entrySet()) {
+            if (entry.getValue() >= 0.45 && entry.getValue() <= 0.55) {
+                removeWords.add(entry.getKey());
+            }
+        }
+        for (String word : removeWords) {
+            probs.remove(word);
+        }
     }
 }
