@@ -90,7 +90,7 @@ public class Main extends Application {
         // Define maps that hold ham/spam word counts and probability for each word
         Map<String, Integer> HamsMap = new HashMap<>();
         Map<String, Integer> SpamsMap = wordCounterSpam.getWordCounts();
-        ;
+
         Map<String, Double> HamsProb = new HashMap<>();
         Map<String, Double> SpamsProb = new HashMap<>();
         Map<String, Double> isWordSpamProb = new HashMap<>();
