@@ -1,6 +1,7 @@
 CSCI2020U Assignment 1
-Samuel Pilkey - 100625211
-Daniel Bullock - 100621150
+Spam or ham filter
+Samuel Pilkey
+Daniel Bullock
 
 To run, download the Main.java, TestFile.java, and WordCounter.java files and compile (perferably in intellij)
 When you run the program it will ask you to choose 5 directories in the following order:
